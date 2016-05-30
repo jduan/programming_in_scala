@@ -2,6 +2,25 @@ package chapter10
 
 // factory object
 object Element {
+  private class ArrayElement(conts: Array[String]) extends Element {
+    override def contents = conts
+  }
+
+  private class UniformElement(
+                        ch: Char,
+                        override val width: Int,
+                        override val height: Int
+                      ) extends Element {
+    private val line = ch.toString * width
+    def contents = Array.fill(height)(line)
+  }
+
+  private class LineElement(s: String) extends Element {
+    val contents = Array(s)
+    override def width = s.length
+    override def height = 1
+  }
+
   def elem(contents: Array[String]): Element = new ArrayElement(contents)
 
   def elem(ch: Char, width: Int, height: Int): Element =
@@ -62,10 +81,6 @@ abstract class Element2(conts: Array[String]) {
   val width: Int = if (height == 0) 0 else conts(0).length
 }
 
-class ArrayElement(conts: Array[String]) extends Element {
-  override def contents = conts
-}
-
 // this is how to pass arguments to parent class's constructor
 class ArrayElement2(conts: Array[String]) extends Element2(conts)
 
@@ -99,24 +114,10 @@ class Tiger(
 ) extends Cat
 
 
-class LineElement(s: String) extends Element {
-  val contents = Array(s)
-  override def width = s.length
-  override def height = 1
-}
-
-
 // Note that the "override" modifier is required except for abstract methods.
 // This is important when it comes to system evolution. One problem is when you
 // add new members (fields or methods) to base classes, you risk breaking
 // subclasses because they may have defined those members already. In Scala, you
 // will see a compilation error which is really helpful.
 
-class UniformElement(
-  ch: Char,
-  override val width: Int,
-  override val height: Int
-) extends Element {
-  private val line = ch.toString * width
-  def contents = Array.fill(height)(line)
-}
+
